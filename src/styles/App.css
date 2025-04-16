@@ -1,0 +1,39 @@
+.wrapper {
+  display: grid;
+}
+
+.header {
+  position: fixed;
+  width: 100%;
+  height: 50px;
+  background: var(--unnamed-color-012433) 0% 0% no-repeat padding-box;
+  opacity: 1;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 0 214px;
+}
+
+.title {
+  position: absolute;
+  margin-top: 74px;
+  font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-normal) 24px/var(--unnamed-line-spacing-12) Roboto;
+  letter-spacing: var(--unnamed-character-spacing-0);
+  color: var(--unnamed-color-386071);
+  text-align: left;
+  font: normal normal normal 24px/12px Roboto;
+  letter-spacing: 0px;
+  color: #386071;
+  opacity: 1;
+}
+
+.filterWrap {
+  display: flex;
+  position: absolute;
+  margin-top: 135px;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 16px;
+}
