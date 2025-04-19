@@ -1,0 +1,105 @@
+.tableWrap {
+    display: flex;
+    padding-top: 211px;
+    flex-direction: column;
+    width: 100%;
+}
+
+.tableHeader {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid #0B749B;
+    opacity: 0.6;
+    padding: 0 19px;
+
+    th {
+        display: flex;
+        align-content: start;
+    }
+}
+
+.tableBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+th {
+    text-align: left;
+}
+
+td:first-child {
+    text-align: center;
+}
+
+.detailsModal {
+    padding: 30px 58px 17px 62px;
+}
+
+.detailsTitleBorder {
+    margin: 0;
+    margin-top: 16px;
+    width: 52px;
+    height: 0px;
+    border: 2px solid var(--unnamed-color-21b3cf);
+    background: transparent url('img/Line 303.png') 0% 0% no-repeat padding-box;
+    opacity: 1;
+}
+
+#alert-dialog-title {
+    font: var(--unnamed-font-style-normal) normal 300 32px/38px Roboto;
+    letter-spacing: var(--unnamed-character-spacing-0);
+    text-align: center;
+    color: #164E78;
+    opacity: 1;
+    padding: 0;
+}
+
+.detailsTitle {
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.customDialogWidth {
+    max-width: none;
+    min-width: 750px;
+}
+
+.customSpacing p {
+    margin: 0;
+}
+
+/* Aplica estilos nas labels (year, genre,...) */
+.customSpacing p:nth-child(2n) {
+    margin-top: 4px;
+    font: var(--unnamed-font-style-normal) normal medium 16px/19px Roboto;
+    letter-spacing: var(--unnamed-character-spacing-0);
+    text-align: left;
+    color: #78849E;
+    opacity: 1;
+}
+
+/* Aplica estilos nos valores (2019,Animtation,...) */
+.customSpacing p:nth-child(2n + 1) {
+    margin-top: 16px;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-normal) 14px/17px Roboto;
+    letter-spacing: var(--unnamed-character-spacing-0);
+    text-align: left;
+    color: #78849EB9;
+    opacity: 1;
+}
+
+.elencoDiv {
+    display: flex;
+    flex-direction: row;
+    gap: 48px;
+    /* Espaçamento entre as colunas */
+}
+
+.elencoDiv div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    /* Espaçamento entre os itens dentro de cada coluna */
+}

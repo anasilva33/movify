@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import './styles/App.css'
 import Filter from './components/Filter'
-import MovieTable from './components/MovieTable.jsx'
+import MovieTable from './components/MovieTable'
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <header>
@@ -26,3 +24,4 @@ function App() {
 }
 
 export default App
+
