@@ -1,8 +1,11 @@
 .tableWrap {
     display: flex;
-    padding-top: 211px;
+    margin-top: 211px;
     flex-direction: column;
     width: 100%;
+    overflow: auto;
+    height: 450px;
+    position: relative;
 }
 
 .tableHeader {

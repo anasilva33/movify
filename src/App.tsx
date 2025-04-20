@@ -1,5 +1,6 @@
 import './styles/App.css'
 import Filter from './components/Filter'
+import NewMovieTable from './components/NewMovieTable'
 import MovieTable from './components/MovieTable'
 
 
@@ -17,6 +18,7 @@ function App() {
         </div>
         <div>
           <MovieTable />
+          {/* <NewMovieTable /> */}
         </div>
       </main>
     </>
