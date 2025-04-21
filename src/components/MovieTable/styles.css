@@ -1,24 +1,57 @@
 .tableWrap {
     display: flex;
-    margin-top: 211px;
+    margin-top: 46px;
     flex-direction: column;
     width: 100%;
     overflow: auto;
-    height: 450px;
+    height: 481px;
     position: relative;
+    margin-bottom: 58.5px;
 }
 
-.tableHeader {
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px solid #0B749B;
-    opacity: 0.6;
-    padding: 0 19px;
+.table {
+    display: grid;
+}
 
-    th {
-        display: flex;
-        align-content: start;
-    }
+.tableHeaderRow {
+    display: flex;
+    width: 100%;
+}
+
+.tableBodyRow {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    padding-top: 16px;
+    padding-bottom: 13px;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-normal) 16px/20px Roboto;
+    letter-spacing: var(--unnamed-character-spacing-0);
+    text-align: left;
+    color: #536B7A;
+    opacity: 1;
+    border-bottom: 1px solid rgba(154, 174, 187, 0.4);
+}
+
+.tableBodyRow td:last-child {
+    color: #9AAEBB;
+}
+
+.tableHeaderColumn {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    border-bottom: 1px solid rgba(11, 116, 155, 0.6);
+    text-transform: capitalize;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-bold) var(--unnamed-font-size-10)/20px Roboto;
+    letter-spacing: var(--unnamed-character-spacing-0);
+    text-align: left;
+    letter-spacing: 0px;
+    color: #0B749B;
+    opacity: 1;
+    background-color: var(--unnamed-color-ffffff);
 }
 
 .tableBody {
@@ -52,7 +85,7 @@ td:first-child {
 #alert-dialog-title {
     font: var(--unnamed-font-style-normal) normal 300 32px/38px Roboto;
     letter-spacing: var(--unnamed-character-spacing-0);
-    text-align: center;
+    text-align: left;
     color: #164E78;
     opacity: 1;
     padding: 0;
@@ -105,4 +138,13 @@ td:first-child {
     flex-direction: column;
     gap: 4px;
     /* Espaçamento entre os itens dentro de cada coluna */
+}
+
+.elencoDiv>div>p:nth-of-type(2) {
+    font: var(--unnamed-font-style-normal) normal medium 16px/19px Roboto;
+    letter-spacing: var(--unnamed-character-spacing-0);
+    text-align: left;
+    font: normal normal medium 16px/19px Roboto;
+    color: #00BAFF;
+    opacity: 1;
 }

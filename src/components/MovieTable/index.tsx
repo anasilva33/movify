@@ -1,7 +1,5 @@
-import { useEffect, useState, useRef, useCallback, Fragment } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { useEffect, useState, useRef, useCallback } from "react";
 import './styles.css'
-import axios from 'axios';
 import { FaEye } from "react-icons/fa";
 import {
     createColumnHelper,
@@ -15,9 +13,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Movie, MovieDetails } from "../../types/movieTable"
-import { movies } from "../../data/movie";
-import { movieDetails } from "../../data/movieDetails";
+import { Movie, MovieDetails } from "../../types/movieTable";
 import { api } from '../../api';
 
 const columnHelper = createColumnHelper<Movie>()
@@ -80,34 +76,7 @@ export default function MovieTable() {
                 }} />
             ),
         },
-    ]
-
-    // useEffect(() => {
-    //     // fetchPosts();
-    //     api.getPagedList(page, 10).then((res) => {
-    //         setPosts(res.data.content);
-    //     });
-    // }, []);
-    // useEffect(() => {
-    //     console.log('Inside Fetch:', isFetching, page, hasMore);
-    //     if (isFetching) {
-    //         return;
-    //     }
-
-    //     setIsFetching(true);
-    //     api.getPagedList(page, 20).then((res) => {
-    //         setIsFetching(false);
-
-    //         if (res.data.content.length === 0) {
-    //             setHasMore(false);
-    //             return;
-    //         }
-
-    //         setPosts([...posts, ...res.data.content]);
-    //     });
-    // }, [page, hasMore, isFetching]);
-
-
+    ];
 
     const fetchMoreOnBottomReached = useCallback(
         (containerRefElement?: HTMLDivElement | null) => {
@@ -137,15 +106,9 @@ export default function MovieTable() {
 
     const rowVirtualizer = useVirtualizer({
         count: rows.length,
-        estimateSize: () => 34, //estimate row height for accurate scrollbar dragging
+        estimateSize: () => 48,
         getScrollElement: () => tableContainerRef.current,
-        //measure dynamic row height, except in firefox because it measures table border height incorrectly
-        // measureElement:
-        //     typeof window !== 'undefined' &&
-        //         navigator.userAgent.indexOf('Firefox') === -1
-        //         ? element => element?.getBoundingClientRect().height
-        //         : undefined,
-        overscan: 20
+        overscan: 11
     })
 
     const handleOpenDetails = () => {
@@ -157,15 +120,6 @@ export default function MovieTable() {
     };
 
     const getMovieDetails = (movieID: string) => {
-        // axios
-        //     .get(`http://movie-challenge-api-xpand.azurewebsites.net/api/movies/${movieID}`)
-        //     .then((response) => {
-        //         const movieDetails = response.data;
-        //         setSelectedRow(movieDetails);
-        //     })
-        //     .catch((error) => {
-        //         console.error("Erro ao buscar dados:", error);
-        //     });
         api.getById(movieID).then((res) => {
             setSelectedRow(res.data);
         });
@@ -173,44 +127,14 @@ export default function MovieTable() {
 
     return (
         <div className="tableWrap" onScroll={e => fetchMoreOnBottomReached(e.currentTarget)} ref={tableContainerRef}>
-            {/* <div className="tableWrap">
-                <table>
-                    <thead>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <th key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody>
-                        {table.getRowModel().rows.map(row => (
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div> */}
             <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
-                <table>
+                <table className="table">
                     <thead>
                         {table.getHeaderGroups().map(headerGroup => (
-                            <tr key={headerGroup.id}>
+                            <tr key={headerGroup.id} className="tableHeaderRow">
                                 {headerGroup.headers.map(header => (
-                                    <th key={header.id}>
+                                    <th key={header.id} className="tableHeaderColumn"
+                                    >
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
@@ -222,28 +146,30 @@ export default function MovieTable() {
                             </tr>
                         ))}
                     </thead>
-                    <tbody>
+                    <tbody >
                         {rowVirtualizer.getVirtualItems().map(virtualRow => {
                             const row = rows[virtualRow.index] as Row<Movie>
                             return (
                                 <tr
-                                    data-index={virtualRow.index} //needed for dynamic row height measurement
-                                    ref={node => rowVirtualizer.measureElement(node)} //measure dynamic row height
+                                    data-index={virtualRow.index}
+                                    ref={node => rowVirtualizer.measureElement(node)}
                                     key={row.id}
+                                    className="tableBodyRow"
                                     style={{
-                                        display: 'flex',
-                                        position: 'absolute',
-                                        transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
-                                        width: '100%',
+                                        transform: `translateY(${virtualRow.start}px)`,
                                     }}
                                 >
-                                    {row.getVisibleCells().map(cell => {
+                                    {row.getVisibleCells().map((cell, index, cells) => {
+                                        const isFirst = index === 0;
+                                        const isLast = index === cells.length - 1;
+
                                         return (
                                             <td
                                                 key={cell.id}
                                                 style={{
                                                     display: 'flex',
-                                                    width: cell.column.getSize(),
+                                                    flex: 1,
+                                                    justifyContent: isFirst || isLast ? 'center' : 'flex-start',
                                                 }}
                                             >
                                                 {flexRender(
@@ -311,7 +237,7 @@ export default function MovieTable() {
                     )}
                 </div>
             </Dialog >
-        </div>
+        </div >
 
     )
 }
