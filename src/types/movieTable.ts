@@ -3,7 +3,7 @@ export type Movie = {
     rank: number;
     title: string;
     year: number;
-    revenue: string;
+    revenue: number;
 };
 
 export type MovieDetails = {
@@ -20,4 +20,21 @@ export type MovieDetails = {
     rating: number;
     votes: number;
     metascore: number;
+};
+
+export type ActiveStateType = 'all' | 'top10' | 'top10ByYear' | null;
+
+export type MovieTableProps = {
+    posts: Movie[];
+    setPosts: React.Dispatch<React.SetStateAction<Movie[]>>;
+    activeState: ActiveStateType;
+    error: string;
+};
+
+export type FilterProps = {
+    posts: Movie[];
+    setPosts: React.Dispatch<React.SetStateAction<Movie[]>>;
+    activeState: ActiveStateType;
+    setActiveState: React.Dispatch<React.SetStateAction<ActiveStateType>>;
+    setError: React.Dispatch<React.SetStateAction<string>>;
 };

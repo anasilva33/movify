@@ -130,14 +130,12 @@ td:first-child {
     display: flex;
     flex-direction: row;
     gap: 48px;
-    /* Espaçamento entre as colunas */
 }
 
 .elencoDiv div {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    /* Espaçamento entre os itens dentro de cada coluna */
 }
 
 .elencoDiv>div>p:nth-of-type(2) {
@@ -147,4 +145,12 @@ td:first-child {
     font: normal normal medium 16px/19px Roboto;
     color: #00BAFF;
     opacity: 1;
+}
+
+.errorLabel {
+    display: flex;
+    justify-content: center;
+    color: #78849EB9;
+    font: var(--unnamed-font-style-normal) normal medium 16px/19px Roboto;
+
 }

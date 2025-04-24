@@ -13,40 +13,17 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Movie, MovieDetails } from "../../types/movieTable";
+import { Movie, MovieDetails, MovieTableProps } from "../../types/movieTable";
 import { api } from '../../api';
 
 const columnHelper = createColumnHelper<Movie>()
 
-export default function MovieTable() {
-    const [posts, setPosts] = useState([]);
+export default function MovieTable({ posts, setPosts, activeState, error }: MovieTableProps) {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const [areDetailsOpen, setAreDetailsOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState<MovieDetails | null>(null);
-
-    const loadMoviesForPage = (nextPage: number) => {
-        if (isFetching) {
-            return;
-        }
-
-        setIsFetching(true);
-        setPage(nextPage);
-        api.getPagedList(nextPage, 20).then((res) => {
-            setIsFetching(false);
-
-            if (res.data.content.length === 0) {
-                setHasMore(false);
-                return;
-            }
-
-            setPosts([...posts, ...res.data.content]);
-        });
-    };
-
-    useEffect(() => loadMoviesForPage(page), []);
-
 
     const columns = [
         columnHelper.accessor('rank', {
@@ -78,21 +55,60 @@ export default function MovieTable() {
         },
     ];
 
-    const fetchMoreOnBottomReached = useCallback(
-        (containerRefElement?: HTMLDivElement | null) => {
-            if (containerRefElement) {
-                const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-                if (scrollHeight - scrollTop - clientHeight > 1 && hasMore && !isFetching) {
-                    loadMoviesForPage(page + 1);
-                }
-            }
-        },
-        [page, isFetching, hasMore]
-    );
+    useEffect(() => console.log('activeState ', activeState), [activeState]);
+    useEffect(() => console.log('error ', error), [error]);
 
-    useEffect(() => {
-        fetchMoreOnBottomReached(tableContainerRef.current)
-    }, [fetchMoreOnBottomReached])
+    const loadMoviesForPage = (nextPage: number) => {
+        if (isFetching) {
+            return;
+        }
+
+        setIsFetching(true);
+        setPage(nextPage);
+        api.getPagedList(nextPage, 10).then((res) => {
+            setIsFetching(false);
+
+            if (res.data.content.length === 0) {
+                setHasMore(false);
+                return;
+            }
+
+            setPosts([...posts, ...res.data.content]);
+        });
+    };
+
+    useEffect(() => loadMoviesForPage(page), []);
+
+
+    // const fetchMoreOnBottomReached = useCallback(
+    //     (containerRefElement?: HTMLDivElement | null) => {
+    //         if (activeState !== 'all') {
+    //             return;
+    //         }
+    //         if (containerRefElement) {
+    //             const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+    //             if (scrollHeight - scrollTop - clientHeight < 50 && hasMore && !isFetching) {
+    //                 loadMoviesForPage(page + 1);
+    //             }
+    //         }
+    //     },
+    //     [page, isFetching, hasMore]
+    // );
+
+
+    // useEffect(() => {
+    //     const container = tableContainerRef.current;
+    //     if (!container) return;
+
+    //     const handleScroll = () => {
+    //         fetchMoreOnBottomReached(container);
+    //     };
+
+    //     container.addEventListener('scroll', handleScroll);
+    //     return () => container.removeEventListener('scroll', handleScroll);
+    // }, [fetchMoreOnBottomReached]);
+
+
 
     const table = useReactTable({
         data: posts,
@@ -105,11 +121,28 @@ export default function MovieTable() {
     const tableContainerRef = useRef<HTMLDivElement>(null)
 
     const rowVirtualizer = useVirtualizer({
-        count: rows.length,
-        estimateSize: () => 48,
-        getScrollElement: () => tableContainerRef.current,
-        overscan: 11
-    })
+        count: rows.length, // número total de elementos a renderizar
+        estimateSize: () => 48,  // altura de cada linha ( em px )
+        getScrollElement: () => tableContainerRef.current, // o elemento onde está a ser aplicado o scroll
+        overscan: 2 // número de itens extra a renderizar antes e depois da janela visível
+    });
+
+    const fetchMoreOnBottomReachedFromVirtualizer = () => {
+        const virtualItems = rowVirtualizer.getVirtualItems();
+        const lastItem = virtualItems[virtualItems.length - 1];
+
+        if (!lastItem) return;
+
+        const isNearEnd = lastItem.index >= rows.length - 2;
+
+        if (isNearEnd && hasMore && !isFetching) {
+            loadMoviesForPage(page + 1);
+        }
+    };
+
+    useEffect(() => {
+        fetchMoreOnBottomReachedFromVirtualizer();
+    }, [rowVirtualizer.getVirtualItems(), rows.length, page, isFetching, hasMore]);
 
     const handleOpenDetails = () => {
         setAreDetailsOpen(true);
@@ -126,7 +159,7 @@ export default function MovieTable() {
     }
 
     return (
-        <div className="tableWrap" onScroll={e => fetchMoreOnBottomReached(e.currentTarget)} ref={tableContainerRef}>
+        <div className="tableWrap" /*onScroll={e => fetchMoreOnBottomReached(e.currentTarget)}*/ ref={tableContainerRef}>
             <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
                 <table className="table">
                     <thead>
@@ -146,6 +179,9 @@ export default function MovieTable() {
                             </tr>
                         ))}
                     </thead>
+                    {error && error !== '' && (
+                        <p className="errorLabel">{error}</p>
+                    )}
                     <tbody >
                         {rowVirtualizer.getVirtualItems().map(virtualRow => {
                             const row = rows[virtualRow.index] as Row<Movie>

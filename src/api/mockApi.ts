@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 
-const generateFakeMovie = (id: number) => ({
+const generateFakeMovie = (id: number, yearOverride?: number) => ({
     id: faker.string.uuid(),
     title: faker.lorem.words(3),
-    year: faker.number.int({ min: 1950, max: 2024 }),
+    year: yearOverride ?? faker.number.int({ min: 1950, max: 2024 }),
     rank: id + 1,
     revenue: Number(faker.number.float({ min: 1, max: 1000, fractionDigits: 2 })),
     genre: faker.helpers.arrayElement(['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Romance']),
@@ -52,5 +52,23 @@ export const mockApi = {
                 300
             )
         );
+    },
+
+    getByYear: async (year: number) => {
+        const movies = Array.from({ length: 10 }, (_, i) =>
+            generateFakeMovie(i, year)
+        );
+
+        return new Promise((resolve) =>
+            setTimeout(() =>
+                resolve({
+                    data: movies,
+                }), 300)
+        );
+    },
+    getAll: async () => {
+        return {
+            data,
+        };
     },
 };

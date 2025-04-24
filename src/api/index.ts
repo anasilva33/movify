@@ -3,6 +3,6 @@ import { mockApi } from './mockApi';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
-console.log('isto: ', USE_MOCK);
-
 export const api = USE_MOCK ? mockApi : realApi;
+
+
