@@ -1,70 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
-import { getTop10ByRevenue } from '../../utils/getTop10ByRevenue';
-import { Movie, FilterProps, ActiveStateType } from '../../types/movieTable';
-import { api } from '../../api';
+import { FilterProps, ActiveStateType } from '../../types/movieTable';
 import './styles.css'
 
-export default function Filters({ posts, setPosts, activeState, setActiveState, setError }: FilterProps) {
+export default function Filters({ filters, updateFilters }: FilterProps) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const isOpen = Boolean(anchorEl);
+    const startingYear = 2016;
 
-    useEffect(() => console.log('posts ', posts), [posts]);
-
-    const open = Boolean(anchorEl);
-
-    const handleClick = (button: ActiveStateType, year?: number) => {
-        setError(null);
-        if (activeState === button) {
-            setActiveState(null);
-            setPosts(posts);
-            setAnchorEl(null);
-            return;
-        }
-
-        if (button === 'top10ByYear' && year !== undefined) {
-            api.getByYear(year).then(res => {
-                let content: Movie = res.data;
-
-                if (content.length === 0) {
-                    setPosts([]);
-                    setError("Oops! No movies found for those dates.");
-                    return;
-                }
-                const top10 = getTop10ByRevenue(content.content);
-                setPosts(top10);
-                setActiveState(button);
-                setAnchorEl(null);
-            }).catch(error => {
-                console.error('Erro na requisição GET:', error);
-            });
-
-        } else if (button === 'top10') {
-            api.getAll().then(res => {
-                let content: Movie = res.data;
-
-                if (content.length === 0) {
-                    setPosts([]);
-                    setError("Oops! No movies found.");
-                    return;
-                }
-
-                console.log('Todos os filmes:', res.data);
-                const top10 = getTop10ByRevenue(content.content);
-                setPosts(top10);
-                setActiveState(button);
-                setAnchorEl(null);
-            });
-
-        }
+    const handleClick = (selectedFilter: ActiveStateType, year: number | null = null) => {
+        setAnchorEl(null);
+        const activeFilter = filters.activeFilter === selectedFilter && year === filters.year ? 'all' : selectedFilter;
+        updateFilters({ activeFilter, year });
     };
     return (
         <div className='filterWrap'>
-            <Button className='filterLabel' onClick={() => handleClick('top10')}>Top 10 Revenue</Button>
+            <Button className={`filterLabel ${filters.activeFilter === 'top10' ? 'active' : ''}`} onClick={() => handleClick('top10')}>Top 10 Revenue</Button>
             <Button
-                aria-controls={open ? 'basic-menu' : undefined}
+                aria-controls={isOpen ? 'basic-menu' : undefined}
                 aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                className='filterLabel'
+                aria-expanded={isOpen ? 'true' : undefined}
+                className={`filterLabel ${filters.activeFilter === 'top10ByYear' ? 'active' : ''}`}
                 onClick={(e) => setAnchorEl(e.currentTarget)}
             >
                 Top 10 Revenue per Year
@@ -73,7 +29,7 @@ export default function Filters({ posts, setPosts, activeState, setActiveState, 
                 id="demo-positioned-menu"
                 aria-labelledby="demo-positioned-button"
                 anchorEl={anchorEl}
-                open={open}
+                open={isOpen}
                 onClose={() => setAnchorEl(null)}
                 anchorOrigin={{
                     vertical: 'top',
@@ -90,7 +46,7 @@ export default function Filters({ posts, setPosts, activeState, setActiveState, 
                 </MenuItem>
                 {
                     [...Array(17)].map((_, i) => {
-                        const year = 2016 - i;
+                        const year = startingYear - i;
                         return (
                             <MenuItem key={year} onClick={() => handleClick('top10ByYear', year)} className='filterOptions'>
                                 {year}
@@ -99,6 +55,6 @@ export default function Filters({ posts, setPosts, activeState, setActiveState, 
                     })
                 }
             </Menu>
-        </div>
+        </div >
     );
 }

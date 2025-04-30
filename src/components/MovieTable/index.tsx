@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import './styles.css'
 import { FaEye } from "react-icons/fa";
 import {
@@ -18,101 +18,52 @@ import { api } from '../../api';
 
 const columnHelper = createColumnHelper<Movie>()
 
-export default function MovieTable({ posts, setPosts, activeState, error }: MovieTableProps) {
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [isFetching, setIsFetching] = useState(false);
+export default function MovieTable({ posts, error, hasMore, isFetching, loadNextPage }: MovieTableProps) {
     const [areDetailsOpen, setAreDetailsOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState<MovieDetails | null>(null);
 
     const columns = [
         columnHelper.accessor('rank', {
-            header: () => 'Ranking',
+            header: () => 'RANKING',
             cell: info => info.getValue(),
+            size: 93,
         }),
         columnHelper.accessor('title', {
             header: () => 'Title',
             cell: info => info.renderValue(),
+            size: 550,
         }),
         columnHelper.accessor('year', {
             header: () => 'Year',
             cell: info => info.renderValue(),
+            size: 93,
         }),
         columnHelper.accessor('revenue', {
             header: 'Revenue',
-            cell: info => info.renderValue(),
+            cell: info => `$${info.getValue()}`,
+            size: 93,
         }),
         {
             id: 'actions',
             header: '',
-            cell: ({ row }) => (
+            cell: ({ row }: any) => (
                 <FaEye onClick={() => {
-                    handleOpenDetails()
+                    setAreDetailsOpen(true);
                     getMovieDetails(row.original.id);
 
                 }} />
             ),
+            size: 100,
         },
     ];
-
-    useEffect(() => console.log('activeState ', activeState), [activeState]);
-    useEffect(() => console.log('error ', error), [error]);
-
-    const loadMoviesForPage = (nextPage: number) => {
-        if (isFetching) {
-            return;
-        }
-
-        setIsFetching(true);
-        setPage(nextPage);
-        api.getPagedList(nextPage, 10).then((res) => {
-            setIsFetching(false);
-
-            if (res.data.content.length === 0) {
-                setHasMore(false);
-                return;
-            }
-
-            setPosts([...posts, ...res.data.content]);
-        });
-    };
-
-    useEffect(() => loadMoviesForPage(page), []);
-
-
-    // const fetchMoreOnBottomReached = useCallback(
-    //     (containerRefElement?: HTMLDivElement | null) => {
-    //         if (activeState !== 'all') {
-    //             return;
-    //         }
-    //         if (containerRefElement) {
-    //             const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-    //             if (scrollHeight - scrollTop - clientHeight < 50 && hasMore && !isFetching) {
-    //                 loadMoviesForPage(page + 1);
-    //             }
-    //         }
-    //     },
-    //     [page, isFetching, hasMore]
-    // );
-
-
-    // useEffect(() => {
-    //     const container = tableContainerRef.current;
-    //     if (!container) return;
-
-    //     const handleScroll = () => {
-    //         fetchMoreOnBottomReached(container);
-    //     };
-
-    //     container.addEventListener('scroll', handleScroll);
-    //     return () => container.removeEventListener('scroll', handleScroll);
-    // }, [fetchMoreOnBottomReached]);
-
-
 
     const table = useReactTable({
         data: posts,
         columns,
+        state: {
+            columnSizing: {},
+        },
+        columnResizeMode: 'onChange',
         getCoreRowModel: getCoreRowModel()
     })
 
@@ -122,7 +73,7 @@ export default function MovieTable({ posts, setPosts, activeState, error }: Movi
 
     const rowVirtualizer = useVirtualizer({
         count: rows.length, // número total de elementos a renderizar
-        estimateSize: () => 48,  // altura de cada linha ( em px )
+        estimateSize: () => 19,  // altura de cada linha ( em px )
         getScrollElement: () => tableContainerRef.current, // o elemento onde está a ser aplicado o scroll
         overscan: 2 // número de itens extra a renderizar antes e depois da janela visível
     });
@@ -136,53 +87,49 @@ export default function MovieTable({ posts, setPosts, activeState, error }: Movi
         const isNearEnd = lastItem.index >= rows.length - 2;
 
         if (isNearEnd && hasMore && !isFetching) {
-            loadMoviesForPage(page + 1);
+            loadNextPage();
         }
     };
 
-    useEffect(() => {
-        fetchMoreOnBottomReachedFromVirtualizer();
-    }, [rowVirtualizer.getVirtualItems(), rows.length, page, isFetching, hasMore]);
-
-    const handleOpenDetails = () => {
-        setAreDetailsOpen(true);
-    };
-
-    const handleCloseDetails = () => {
-        setAreDetailsOpen(false);
-    };
-
     const getMovieDetails = (movieID: string) => {
-        api.getById(movieID).then((res) => {
+        api.getById(movieID).then((res: any) => {
             setSelectedRow(res.data);
         });
     }
 
+    useEffect(() => {
+        if (hasMore) {
+            fetchMoreOnBottomReachedFromVirtualizer();
+        }
+    }, [rowVirtualizer.getVirtualItems(), rows.length, isFetching, hasMore]);
+
     return (
-        <div className="tableWrap" /*onScroll={e => fetchMoreOnBottomReached(e.currentTarget)}*/ ref={tableContainerRef}>
+        <div className="tableWrap" ref={tableContainerRef}>
             <div style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
                 <table className="table">
                     <thead>
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id} className="tableHeaderRow">
-                                {headerGroup.headers.map(header => (
-                                    <th key={header.id} className="tableHeaderColumn"
-                                    >
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </th>
-                                ))}
+                                {headerGroup.headers.map(header => {
+                                    return (
+                                        <th key={header.id} className="tableHeaderColumn" style={{ width: `${header.getSize()}px` }}
+                                        >
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                        </th>
+                                    )
+                                })}
                             </tr>
                         ))}
                     </thead>
                     {error && error !== '' && (
                         <p className="errorLabel">{error}</p>
                     )}
-                    <tbody >
+                    <tbody style={{ marginTop: '22px' }}>
                         {rowVirtualizer.getVirtualItems().map(virtualRow => {
                             const row = rows[virtualRow.index] as Row<Movie>
                             return (
@@ -204,8 +151,8 @@ export default function MovieTable({ posts, setPosts, activeState, error }: Movi
                                                 key={cell.id}
                                                 style={{
                                                     display: 'flex',
-                                                    flex: 1,
                                                     justifyContent: isFirst || isLast ? 'center' : 'flex-start',
+                                                    width: `${cell.column.getSize()}px`
                                                 }}
                                             >
                                                 {flexRender(
@@ -224,7 +171,7 @@ export default function MovieTable({ posts, setPosts, activeState, error }: Movi
 
             <Dialog
                 open={areDetailsOpen}
-                onClose={handleCloseDetails}
+                onClose={() => setAreDetailsOpen(false)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 PaperProps={{ className: 'customDialogWidth' }}
@@ -242,7 +189,13 @@ export default function MovieTable({ posts, setPosts, activeState, error }: Movi
                                         <p>Year</p>
                                         <p>{selectedRow.year}</p>
                                         <p>Genre</p>
-                                        <p>{selectedRow.genre}</p>
+                                        <p>
+                                            {selectedRow.genre
+                                                .split(",")
+                                                .map(name => name.trim())
+                                                .filter(name => name)
+                                                .join(", ")}
+                                        </p>
                                         <p>Description</p>
                                         <p>{selectedRow.description}</p>
                                         <div className="elencoDiv">
@@ -252,7 +205,12 @@ export default function MovieTable({ posts, setPosts, activeState, error }: Movi
                                             </div>
                                             <div>
                                                 <p>Actors</p>
-                                                <p>{selectedRow.actors}</p>
+                                                <p>
+                                                    {selectedRow.actors.split(",")
+                                                        .map(name => name.trim())
+                                                        .filter(name => name)
+                                                        .join(" ")}
+                                                </p>
                                             </div>
                                         </div>
                                         <p></p>

@@ -15,7 +15,7 @@ Button.filterLabel {
     align-items: center;
 }
 
-Button.filterLabel:hover {
+Button.filterLabel.active {
     background-color: #00BAFF;
     border: 1px solid #78849E66;
     border-radius: 20px;

@@ -14,8 +14,10 @@
 }
 
 .tableHeaderRow {
-    display: flex;
-    width: 100%;
+    position: fixed;
+    background-color: var(--unnamed-color-ffffff);
+    z-index: 2;
+    border-bottom: 1px solid #0B749B;
 }
 
 .tableBodyRow {
@@ -37,14 +39,7 @@
 }
 
 .tableHeaderColumn {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    display: flex;
-    flex: 1;
-    justify-content: flex-start;
-    border-bottom: 1px solid rgba(11, 116, 155, 0.6);
-    text-transform: capitalize;
+    text-transform: uppercase;
     font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-bold) var(--unnamed-font-size-10)/20px Roboto;
     letter-spacing: var(--unnamed-character-spacing-0);
     text-align: left;

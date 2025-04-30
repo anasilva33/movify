@@ -24,17 +24,27 @@ export type MovieDetails = {
 
 export type ActiveStateType = 'all' | 'top10' | 'top10ByYear' | null;
 
+export type ActiveFilters = { activeFilter: ActiveStateType, year?: number | null };
+
 export type MovieTableProps = {
     posts: Movie[];
-    setPosts: React.Dispatch<React.SetStateAction<Movie[]>>;
-    activeState: ActiveStateType;
     error: string;
+    hasMore: boolean;
+    isFetching: boolean;
+    loadNextPage: Function;
 };
 
 export type FilterProps = {
+    filters: ActiveFilters;
+    updateFilters: React.Dispatch<React.SetStateAction<ActiveFilters>>;
+};
+
+export type loadMoviesForPageProps = {
+    page: number;
+    isFetching: boolean;
+    setIsFetching: React.Dispatch<React.SetStateAction<boolean>>;
+    setPage: React.Dispatch<React.SetStateAction<number>>;
+    setHasMore: React.Dispatch<React.SetStateAction<boolean>>;
     posts: Movie[];
     setPosts: React.Dispatch<React.SetStateAction<Movie[]>>;
-    activeState: ActiveStateType;
-    setActiveState: React.Dispatch<React.SetStateAction<ActiveStateType>>;
-    setError: React.Dispatch<React.SetStateAction<string>>;
 };
