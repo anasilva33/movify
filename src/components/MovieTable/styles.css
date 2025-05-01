@@ -147,5 +147,9 @@ td:first-child {
     justify-content: center;
     color: #78849EB9;
     font: var(--unnamed-font-style-normal) normal medium 16px/19px Roboto;
+}
 
+.errorWraper {
+    display: flex;
+    justify-content: center;
 }

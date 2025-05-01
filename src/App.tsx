@@ -30,85 +30,78 @@ function App() {
         return;
       }
 
-      setPosts([...posts, ...res.data.content]);
+      const existingMovies = newPage === 1 ? [] : posts;
+      setPosts([...existingMovies, ...res.data.content]);
       setHasMore(true);
     });
   }
 
-  const loadMoviesForPage = ({ page, isFetching, setIsFetching, setPage, setHasMore, posts, setPosts }: loadMoviesForPageProps) => {
+  const loadMoviesForPageV3 = async (newPage: number) => {
     if (isFetching) {
       return;
     }
 
     setIsFetching(true);
-    setPage(page);
-    api.getPagedList(page, 10).then((res: any) => {
-      setIsFetching(false);
+    setPage(newPage);
+    const res: any = await api.getPagedList(newPage, 10);
+    setIsFetching(false);
 
-      if (res.data.content.length === 0) {
-        setHasMore(false);
-        return;
-      }
+    if (res.data.content.length === 0) {
+      setHasMore(false);
+      return;
+    }
 
-      setPosts([...posts, ...res.data.content]);
-    });
-  };
+    const existingMovies = newPage === 1 ? [] : posts;
+    setPosts([...existingMovies, ...res.data.content]);
+    setHasMore(true);
+  }
 
   const loadNextPage = () => {
     loadMoviesForPageV2(page + 1);
   }
 
-  //TODO: nos filtros o hasMore deve ser false;
   useEffect(() => {
     setError('');
 
-    if (filters.activeFilter === 'all') {
-      setPage(1);
-      setIsFetching(true);
-      setPosts([]);
-      api.getPagedList(1, 10).then((res: any) => {
-        if (res.data.content.length === 0) {
-          setHasMore(false);
-        } else {
-          setPosts(prevPosts => [...prevPosts, ...res.data.content]);
-          setHasMore(true);
+    switch (filters.activeFilter) {
+      case 'all':
+        console.log('Inside the switch statement ' + page);
+        loadMoviesForPageV2(1);
+        break;
+      case 'top10ByYear':
+        if (!filters.year) {
+          return;
         }
+        api.getByYear(filters.year).then((res: any) => {
+          setupTop10Movies(res.data.content);
+        }).catch(error => {
+          console.error('Erro na requisição GET:', error);
+        });
+        break;
+      case 'top10':
+        api.getAll().then((res: any) => {
+          setupTop10Movies(res.data.content);
+        }).catch(error => {
+          console.error('Erro na requisição GET :', error);
+        });
+        break;
+      default:
+        return;
+    }
 
-        setIsFetching(false);
-      });
+  }, [filters]);
 
+  const setupTop10Movies = (movies: Movie[]) => {
+    if (movies.length === 0) {
+      setPosts([]);
+      setError("Oops! No movies found.");
       return;
     }
-    if (filters.activeFilter === 'top10ByYear') {
-      if (!filters.year) {
-        return;
-      }
-      api.getByYear(filters.year).then((res: any) => {
-        handleApiResponse(res);
-      }).catch(error => {
-        console.error('Erro na requisição GET:', error);
-      });
 
-    } else if (filters.activeFilter === 'top10') {
-      api.getAll().then((res: any) => {
-        handleApiResponse(res);
-      });
-    }
-
-    const handleApiResponse = (res: AxiosResponse<{ content: Movie[] }>) => {
-      const content = res.data.content;
-
-      if (content.length === 0) {
-        setPosts([]);
-        setError("Oops! No movies found.");
-        return;
-      }
-
-      const top10 = getTop10ByRevenue(content);
-      setPosts(top10);
-      setHasMore(false);
-    };
-  }, [filters]);
+    const top10 = getTop10ByRevenue(movies);
+    setPosts(top10);
+    setHasMore(false);
+  };
 
   // useEffect(() => loadMoviesForPage(page), []);
 

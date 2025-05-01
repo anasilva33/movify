@@ -40,7 +40,10 @@ export default function MovieTable({ posts, error, hasMore, isFetching, loadNext
         }),
         columnHelper.accessor('revenue', {
             header: 'Revenue',
-            cell: info => `$${info.getValue()}`,
+            cell: info => {
+                const value = info.getValue();
+                return value ? `$${value}` : '';
+            },
             size: 93,
         }),
         {
@@ -126,10 +129,14 @@ export default function MovieTable({ posts, error, hasMore, isFetching, loadNext
                             </tr>
                         ))}
                     </thead>
-                    {error && error !== '' && (
-                        <p className="errorLabel">{error}</p>
-                    )}
                     <tbody style={{ marginTop: '22px' }}>
+                        {error && error !== '' && (
+                            <tr className="errorWraper">
+                                <td>
+                                    <p className="errorLabel">{error}</p>
+                                </td>
+                            </tr>
+                        )}
                         {rowVirtualizer.getVirtualItems().map(virtualRow => {
                             const row = rows[virtualRow.index] as Row<Movie>
                             return (
@@ -187,43 +194,43 @@ export default function MovieTable({ posts, error, hasMore, isFetching, loadNext
                                 <DialogContentText id="alert-dialog-description" sx={{ padding: '0' }}>
                                     <div className="customSpacing">
                                         <p>Year</p>
-                                        <p>{selectedRow.year}</p>
+                                        {selectedRow.year ? <p>{selectedRow.year}</p> : <p> - </p>}
                                         <p>Genre</p>
-                                        <p>
+                                        {selectedRow.genre ? <p>
                                             {selectedRow.genre
                                                 .split(",")
                                                 .map(name => name.trim())
                                                 .filter(name => name)
                                                 .join(", ")}
-                                        </p>
+                                        </p> : <p> - </p>}
                                         <p>Description</p>
-                                        <p>{selectedRow.description}</p>
+                                        {selectedRow.description ? <p>{selectedRow.description}</p> : <p> - </p>}
                                         <div className="elencoDiv">
                                             <div>
                                                 <p>Director</p>
-                                                <p>{selectedRow.director}</p>
+                                                {selectedRow.director ? <p>{selectedRow.director}</p> : <p> - </p>}
                                             </div>
                                             <div>
                                                 <p>Actors</p>
-                                                <p>
+                                                {selectedRow.actors ? <p>
                                                     {selectedRow.actors.split(",")
                                                         .map(name => name.trim())
                                                         .filter(name => name)
                                                         .join(" ")}
-                                                </p>
+                                                </p> : <p> - </p>}
                                             </div>
                                         </div>
                                         <p></p>
                                         <p>Runtime</p>
-                                        <p>{selectedRow.runtime} mins</p>
+                                        {selectedRow.runtime ? <p>{`${selectedRow.runtime} mins`}</p> : <p> - </p>}
                                         <p>Rating</p>
-                                        <p>{selectedRow.rating}</p>
+                                        {selectedRow.rating ? <p>{selectedRow.rating}</p> : <p> - </p>}
                                         <p>Votes</p>
-                                        <p>{selectedRow.votes}</p>
+                                        {selectedRow.votes ? <p>{selectedRow.votes}</p> : <p> - </p>}
                                         <p>Revenue</p>
-                                        <p>${selectedRow.revenue}</p>
+                                        {selectedRow.revenue ? <p>{`$ ${selectedRow.revenue}`}</p> : <p> - </p>}
                                         <p>Metascore</p>
-                                        <p>{selectedRow.metascore}</p>
+                                        {selectedRow.metascore ? <p>{selectedRow.metascore}</p> : <p> - </p>}
                                     </div>
                                 </DialogContentText>
                             </DialogContent>
