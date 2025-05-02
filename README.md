@@ -30,3 +30,9 @@ docker build -t movify -f ./Dockerfile .
 docker run -d -p 8080:80 --name movify movify 
 ```
 
+### 3. Access the App
+
+The application will be available at [http://localhost:8080](http://localhost:8080).
+
+
+
