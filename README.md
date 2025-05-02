@@ -1,54 +1,32 @@
-# React + TypeScript + Vite
+# 🎬 Movify
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Movify: Filmes que te movem  - is a modern web application built with **React** and **Vite** that allows users to explore and discover movies. Fast, lightweight, and scalable, Movify is a great starting point for any media or movie catalog-related project.
 
-Currently, two official plugins are available:
+## 🚀 Technologies Used
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [Docker](https://www.docker.com/)
 
-## Expanding the ESLint configuration
+## 📐 Sizes
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To view the app at its optimal size, resize the window to the dimensions defined in the [design](https://xd.adobe.com/view/ea7b4a6b-b5b4-40cf-8d34-fffd1ed91d8c-bf28/specs/) (1366x768)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+## 📦 How to Run the Project with Docker
+
+Make sure you have **Docker** installed on your machine.
+
+### 1. Build the Docker image
+
+```bash
+docker build -t movify -f ./Dockerfile . 
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Run the container on port 8080
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+docker run -d -p 8080:80 --name movify movify 
 ```
+

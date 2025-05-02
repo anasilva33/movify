@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
-import { FilterProps, ActiveStateType } from '../../types/movieTable';
+import { FilterProps, ActiveStateType } from '../../types/movieTypes';
 import './styles.css'
 
 export default function Filters({ filters, updateFilters }: FilterProps) {

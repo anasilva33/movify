@@ -1,4 +1,4 @@
-import { Movie } from '../types/movieTable';
+import { Movie } from '../types/movieTypes';
 
 export function getTop10ByRevenue(movies: Movie[]): Movie[] {
     return [...movies]

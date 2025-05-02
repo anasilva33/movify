@@ -153,3 +153,45 @@ td:first-child {
     display: flex;
     justify-content: center;
 }
+
+.closeButtonContainer {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.closeIcon {
+    font-size: 24px;
+    font-weight: bold;
+    color: #718FA2;
+
+    transition: transform 0.2s ease;
+}
+
+.closeLabel {
+    font-size: 8px;
+    text-transform: uppercase;
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-normal) 8px/16px Roboto;
+    text-align: left;
+    font: normal normal normal 8px/16px Roboto;
+    letter-spacing: 0.64px;
+    color: #718FA2;
+    opacity: 1;
+    margin-top: -4px;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.closeButtonContainer:hover .closeLabel {
+    transform: translateX(-27px) translateY(-17px);
+    color: var(--unnamed-color-012433);
+}
+
+.closeButtonContainer:hover .closeIcon {
+    color: var(--unnamed-color-012433);
+}

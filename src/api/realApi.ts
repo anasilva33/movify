@@ -1,4 +1,4 @@
-import { Movie } from '../types/movieTable';
+import { Movie } from '../types/movieTypes';
 import { apiClient } from './apiClient';
 
 export const realApi = {

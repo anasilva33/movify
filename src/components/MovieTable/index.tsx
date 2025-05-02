@@ -13,7 +13,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Movie, MovieDetails, MovieTableProps } from "../../types/movieTable";
+import { Movie, MovieDetails, MovieTableProps } from "../../types/movieTypes";
 import { api } from '../../api';
 
 const columnHelper = createColumnHelper<Movie>()
@@ -94,10 +94,9 @@ export default function MovieTable({ posts, error, hasMore, isFetching, loadNext
         }
     };
 
-    const getMovieDetails = (movieID: string) => {
-        api.getById(movieID).then((res: any) => {
-            setSelectedRow(res.data);
-        });
+    const getMovieDetails = async (movieID: string) => {
+        const res: any = await api.getById(movieID)
+        setSelectedRow(res.data);
     }
 
     useEffect(() => {
@@ -183,6 +182,10 @@ export default function MovieTable({ posts, error, hasMore, isFetching, loadNext
                 aria-describedby="alert-dialog-description"
                 PaperProps={{ className: 'customDialogWidth' }}
             >
+                <div className="closeButtonContainer" onClick={() => setAreDetailsOpen(false)}>
+                    <span className="closeIcon">×</span>
+                    <span className="closeLabel">close</span>
+                </div>
                 <div className="detailsModal">
                     {selectedRow && (
                         <>
